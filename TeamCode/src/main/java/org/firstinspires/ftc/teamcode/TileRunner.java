@@ -1,28 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import static java.lang.Math.abs;
+@TeleOp(name="Tile Runner Tank", group="DemoBot")
 
-/**
- * Demo Omnibot code for showing off the omnibot
- */
-@TeleOp(name="Omnibot", group="DemoBot")
-public class Omnibot extends OpMode {
+public class TileRunner extends OpMode {
 
-    //drive train motors
-    private DcMotor frontLeft = null;
-    private DcMotor backLeft = null;
     private DcMotor frontRight = null;
     private DcMotor backRight = null;
+    private DcMotor frontLeft = null;
+    private DcMotor backLeft = null;
 
     //bumper speed adjustion for master controls
-    private double speed = 2;
+    private double speed = 1.5;
     private boolean pressed = false;
     private boolean pressed2 = false;
     private boolean pressedA = false;
@@ -30,14 +24,13 @@ public class Omnibot extends OpMode {
 
     @Override
     public void init() {
-        //defining motors from config
-        frontLeft = hardwareMap.dcMotor.get("frontLeft");
-        backLeft = hardwareMap.dcMotor.get("backLeft");
-        frontRight = hardwareMap.dcMotor.get("frontRight");
-        backRight = hardwareMap.dcMotor.get("backRight");
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //setting power to the motors to make sure they are not moving
         frontLeft.setPower(0);
@@ -51,18 +44,16 @@ public class Omnibot extends OpMode {
 
     @Override
     public void loop() {
-        double leftStickX, leftStickY, rightStickX;
+
+        double leftStickY, rightStickY;
+
         //movement for robot input kid
         double leftStickY1 = gamepad1.left_stick_y;
-        double leftStickX1 = gamepad1.left_stick_x;
-        //rotation for robot input kid
-        double rightStickX1 = gamepad1.right_stick_x;
+        double rightStickY1 = gamepad1.right_stick_y;
 
         //movement for robot input master
         double leftStickY2 = gamepad2.left_stick_y;
-        double leftStickX2 = gamepad2.left_stick_x;
-        //rotation for robot input master
-        double rightStickX2 = gamepad2.right_stick_x;
+        double rightStickY2 = gamepad2.right_stick_y;
 
         //bumper for speeding up and slowing down the robot.
         boolean leftBumper2 = gamepad2.left_bumper;
@@ -105,46 +96,25 @@ public class Omnibot extends OpMode {
         }
 
         //changing who is driving and move is for stopping kid driving
-        if(leftStickX2 == 0 && leftStickY2 == 0 && rightStickX2 == 0 && move) {
-            leftStickX = leftStickX1;
+        if(leftStickY2 == 0 && rightStickY2 == 0 && move) {
             leftStickY = leftStickY1;
-            rightStickX = rightStickX1;
+            rightStickY = rightStickY1;
         }
         else {
-            leftStickX = leftStickX2;
             leftStickY = leftStickY2;
-            rightStickX = rightStickX2;
+            rightStickY = rightStickY2;
         }
 
-        //movement for robot method being run
-        drive(leftStickY/speed, leftStickX/speed, rightStickX/speed);
+        //movement for robot
+        frontRight.setPower(rightStickY/speed);
+        backRight.setPower(rightStickY/speed);
+        frontLeft.setPower(leftStickY/speed);
+        backLeft.setPower(leftStickY/speed);
 
-        telemetry.addData("Speed", 1/speed);
-        telemetry.addData("override", !move);
+        telemetry.addData("Speed", speed);
         telemetry.update();
 
         RobotLog.ii("5040MSGHW","Motors running");
     }
-
-
-    //method to move the robot
-    public void drive(double forward, double sideways, double rotation) {
-
-        //adds all the inputs together to get the number to scale it by
-        double scale = abs(rotation) + abs(forward) + abs(sideways);
-
-        //scales the inputs when needed
-        if(scale > 1) {
-            forward /= scale;
-            rotation /= scale;
-            sideways /= scale;
-        }
-        //setting the motor powers to move
-        frontLeft.setPower(forward-rotation-sideways);
-        backLeft.setPower(forward-rotation+sideways);
-        frontRight.setPower(forward+rotation+sideways);
-        backRight.setPower(forward+rotation-sideways);
-        //Left Front = +Speed + Turn - Strafe      Right Front = +Speed - Turn + Strafe
-        //Left Rear  = +Speed + Turn + Strafe      Right Rear  = +Speed - Turn - Strafe
-    }
 }
+
