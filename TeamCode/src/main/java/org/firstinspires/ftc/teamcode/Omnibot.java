@@ -140,10 +140,10 @@ public class Omnibot extends OpMode {
             sideways /= scale;
         }
         //setting the motor powers to move
-        frontLeft.setPower(forward-rotation-sideways);
-        backLeft.setPower(forward-rotation+sideways);
-        frontRight.setPower(forward+rotation+sideways);
-        backRight.setPower(forward+rotation-sideways);
+        frontLeft.setPower(forward-rotation+sideways);
+        backLeft.setPower(forward-rotation-sideways);
+        frontRight.setPower(forward+rotation-sideways);
+        backRight.setPower(forward+rotation+sideways);
         //Left Front = +Speed + Turn - Strafe      Right Front = +Speed - Turn + Strafe
         //Left Rear  = +Speed + Turn + Strafe      Right Rear  = +Speed - Turn - Strafe
     }
