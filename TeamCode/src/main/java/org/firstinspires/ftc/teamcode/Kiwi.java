@@ -33,10 +33,19 @@ public class Kiwi extends OpMode
     @Override
     public void loop()
     {
+
+        if(gamepad1.x)
+        {
+
+            motorOne.setPower(1);
+            motorTwo.setPower(1);
+            motorThree.setPower(1);
+
+        }
         // Controller values
-        double x=gamepad1.right_stick_x;
-        double y=gamepad1.right_stick_y;
-        double r=gamepad1.left_stick_x;
+        double x=gamepad1.left_stick_x;
+        double y=gamepad1.left_stick_y;
+        double r=gamepad1.right_stick_x;
         boolean leftBumper = gamepad1.left_bumper;
         boolean rightBumper = gamepad1.right_bumper;
 ;
@@ -81,7 +90,10 @@ public class Kiwi extends OpMode
             speed = 1;
         }
 
-        telemetry.addData("speed",1/speed);
+        telemetry.addData("speed",speed);
+        telemetry.addData("motor1",motor1Power);
+        telemetry.addData("motor2",motor2Power);
+        telemetry.addData("motore3",motor3Power);
 
     }
 
