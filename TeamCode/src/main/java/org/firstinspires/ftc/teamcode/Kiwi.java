@@ -11,9 +11,11 @@ import static java.lang.Math.abs;
 public class Kiwi extends OpMode
 {
 
-    DcMotor motorOne;
-    DcMotor motorTwo;
-    DcMotor motorThree;
+    private DcMotor motorOne;
+    private DcMotor motorTwo;
+    private DcMotor motorThree;
+    private boolean pressed = false;
+    private double speed = 2;
 
     @Override
     public void init()
@@ -28,28 +30,16 @@ public class Kiwi extends OpMode
 
     }
 
-    double x;
-    double y;
-    double r;
-
-    double m1;
-    double m2;
-    double m3;
-    double speed = 2;
-    boolean leftBumper;
-    boolean rightBumper;
-    boolean pressed;
-
     @Override
     public void loop()
     {
-        x=gamepad1.right_stick_x;
-        y=gamepad1.right_stick_y;
-        r=gamepad1.left_stick_x;
-
-        m1=-1/2*x - Math.sqrt(3)/2*y + r;
-        m2=-1/2*x + Math.sqrt(3)/2*y + r;
-        m3= x + r;
+        // Controller values
+        double x=gamepad1.right_stick_x;
+        double y=gamepad1.right_stick_y;
+        double r=gamepad1.left_stick_x;
+        boolean leftBumper = gamepad1.left_bumper;
+        boolean rightBumper = gamepad1.right_bumper;
+;
 
         double scale = abs(r) + abs(y) + abs(x);
 
@@ -61,9 +51,12 @@ public class Kiwi extends OpMode
             r /= scale;
         }
 
-        motorOne.setPower(m1/speed );
-        motorTwo.setPower(m2/speed);
-        motorThree.setPower(m3/speed);
+        double motor1Power = -1/2*x - Math.sqrt(3)/2*y + r;
+        double motor2Power = -1/2*x + Math.sqrt(3)/2*y + r;
+        double motor3Power = x + r;
+        motorOne.setPower(motor1Power/speed );
+        motorTwo.setPower(motor2Power/speed);
+        motorThree.setPower(motor3Power/speed);
 
         if(leftBumper && !pressed)
         {
@@ -92,4 +85,7 @@ public class Kiwi extends OpMode
 
     }
 
+    public double getOrientedDriveValue() {
+        return 0;
+    }
 }
