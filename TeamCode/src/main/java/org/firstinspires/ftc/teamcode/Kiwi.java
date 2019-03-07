@@ -34,18 +34,10 @@ public class Kiwi extends OpMode
     public void loop()
     {
 
-        if(gamepad1.x)
-        {
-
-            motorOne.setPower(1);
-            motorTwo.setPower(1);
-            motorThree.setPower(1);
-
-        }
         // Controller values
         double x=gamepad1.left_stick_x;
         double y=gamepad1.left_stick_y;
-        double r=gamepad1.right_stick_x;
+        double r=gamepad1.right_stick_x/3;
         boolean leftBumper = gamepad1.left_bumper;
         boolean rightBumper = gamepad1.right_bumper;
 ;
@@ -60,16 +52,26 @@ public class Kiwi extends OpMode
             r /= scale;
         }
 
-        double motor1Power = -1/2*x - Math.sqrt(3)/2*y + r;
-        double motor2Power = -1/2*x + Math.sqrt(3)/2*y + r;
+        double motor1Power = (-1.0/2.0)*x + (Math.sqrt(3)/2)*y + r;
+        double motor2Power = (-1.0/2.0)*x - (Math.sqrt(3)/2)*y + r;
         double motor3Power = x + r;
-        motorOne.setPower(motor1Power/speed );
-        motorTwo.setPower(motor2Power/speed);
-        motorThree.setPower(motor3Power/speed);
+        if(gamepad1.x)
+        {
+
+            motorOne.setPower(1);
+            motorTwo.setPower(1);
+            motorThree.setPower(1);
+
+        }
+        else {
+            motorOne.setPower(motor1Power / speed);
+            motorTwo.setPower(motor2Power / speed);
+            motorThree.setPower(motor3Power / speed);
+        }
 
         if(leftBumper && !pressed)
         {
-            speed += 0.2;
+            speed += 0.1;
             pressed = true;
         }
         else if(pressed && !leftBumper)
@@ -78,7 +80,7 @@ public class Kiwi extends OpMode
         }
         if(rightBumper && !pressed)
         {
-            speed -= 0.2;
+            speed -= 0.1;
             pressed = true;
         }
         else if(pressed && !rightBumper)
@@ -90,7 +92,7 @@ public class Kiwi extends OpMode
             speed = 1;
         }
 
-        telemetry.addData("speed",speed);
+        telemetry.addData("speed",1/speed);
         telemetry.addData("motor1",motor1Power);
         telemetry.addData("motor2",motor2Power);
         telemetry.addData("motore3",motor3Power);

@@ -111,7 +111,8 @@ public class TileRunner extends OpMode {
         frontLeft.setPower(leftStickY/speed);
         backLeft.setPower(leftStickY/speed);
 
-        telemetry.addData("Speed", speed);
+        telemetry.addData("Speed", 1/speed);
+        telemetry.addData("override", !move);
         telemetry.update();
 
         RobotLog.ii("5040MSGHW","Motors running");
