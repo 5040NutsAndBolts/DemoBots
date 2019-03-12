@@ -50,7 +50,8 @@ public class OrientedKiwi extends OpMode
         imu.initialize(parameters);
         imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
     }
-
+    boolean override = false;
+    boolean aPressed = false;
     @Override
     public void loop()
     {
@@ -61,10 +62,12 @@ public class OrientedKiwi extends OpMode
         // Controller values
         double leftStickX1 = gamepad1.left_stick_x;
         double leftStickY1 = gamepad1.left_stick_y;
+        double leftStickX2 = gamepad2.left_stick_x;
+        double leftStickY2 = gamepad2.left_stick_y;
         double r = gamepad1.right_stick_x/3;
-        boolean leftBumper = gamepad1.left_bumper;
-        boolean rightBumper = gamepad1.right_bumper;
-;
+        double r2 = gamepad2.right_stick_x/3;
+        boolean leftBumper = gamepad2.left_bumper;
+        boolean rightBumper = gamepad2.right_bumper;
 
         double scale = abs(r) + abs(leftStickX1) + abs(leftStickY1);
 
@@ -76,8 +79,41 @@ public class OrientedKiwi extends OpMode
             r /= scale;
         }
 
-        double x = leftStickX1*Math.cos(gyroFirstAngle) + leftStickY1*Math.sin(gyroFirstAngle);
-        double y = -leftStickX1*Math.sin(gyroFirstAngle) + leftStickY1*Math.cos(gyroFirstAngle);
+
+        //controls overriding controller 1
+        if(gamepad1.a&&!aPressed)
+        {
+
+            aPressed=true;
+            override=!override;
+
+        }else if(!gamepad1.a)
+        {
+
+            aPressed=false;
+
+        }
+
+        double x;
+        double y;
+
+        //sets the x and y values
+        if(!override)
+        {
+
+            x = leftStickX1 * Math.cos(gyroFirstAngle) + leftStickY1 * Math.sin(gyroFirstAngle);
+            y = -leftStickX1 * Math.sin(gyroFirstAngle) + leftStickY1 * Math.cos(gyroFirstAngle);
+
+        }else
+        {
+
+            x = leftStickX2 * Math.cos(gyroFirstAngle) + leftStickY2 * Math.sin(gyroFirstAngle);
+            y = -leftStickX2 * Math.sin(gyroFirstAngle) + leftStickY2 * Math.cos(gyroFirstAngle);
+            r=r2;
+
+        }
+
+        //sets the motor power
         double motor1Power = -x/2 - 0.866*y + r;
         double motor2Power = -x/2 + 0.866*y + r;
         double motor3Power = x + r;
@@ -89,12 +125,14 @@ public class OrientedKiwi extends OpMode
             motorThree.setPower(1);
 
         }
-        else {
+        else
+        {
             motorOne.setPower(motor1Power / speed);
             motorTwo.setPower(motor2Power / speed);
             motorThree.setPower(motor3Power / speed);
         }
 
+        //speed control
         if(leftBumper && !pressed)
         {
             speed += 0.1;
@@ -119,9 +157,7 @@ public class OrientedKiwi extends OpMode
         }
 
         telemetry.addData("speed",1/speed);
-        telemetry.addData("motor1",motor1Power);
-        telemetry.addData("motor2",motor2Power);
-        telemetry.addData("motore3",motor3Power);
+        telemetry.addData("overridde",override);
 
     }
 

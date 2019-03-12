@@ -30,17 +30,54 @@ public class Kiwi extends OpMode
 
     }
 
+    boolean override = false;
+    boolean aPressed = false;
+
     @Override
     public void loop()
     {
 
         // Controller values
-        double x=gamepad1.left_stick_x;
-        double y=gamepad1.left_stick_y;
         double r=gamepad1.right_stick_x/3;
-        boolean leftBumper = gamepad1.left_bumper;
-        boolean rightBumper = gamepad1.right_bumper;
-;
+        double r2=gamepad2.right_stick_x/3;
+        boolean leftBumper = gamepad2.left_bumper;
+        boolean rightBumper = gamepad2.right_bumper;
+        double leftStickX1 = gamepad1.left_stick_x;
+        double leftStickY1 = gamepad1.left_stick_y;
+        double leftStickX2 = gamepad2.left_stick_x;
+        double leftStickY2 = gamepad2.left_stick_y;
+
+
+        if(gamepad1.a&&!aPressed)
+        {
+
+            aPressed=true;
+            override=!override;
+
+        }else if(!gamepad1.a)
+        {
+
+            aPressed=false;
+
+        }
+
+        double x;
+        double y;
+
+        if(!override)
+        {
+
+            x = leftStickX1;
+            y = -leftStickY1;
+
+        }else
+        {
+
+            x = leftStickX2;
+            y = -leftStickY2;
+            r=r2;
+
+        }
 
         double scale = abs(r) + abs(y) + abs(x);
 
@@ -93,9 +130,7 @@ public class Kiwi extends OpMode
         }
 
         telemetry.addData("speed",1/speed);
-        telemetry.addData("motor1",motor1Power);
-        telemetry.addData("motor2",motor2Power);
-        telemetry.addData("motore3",motor3Power);
+        telemetry.addData("overridde",override);
 
     }
 
