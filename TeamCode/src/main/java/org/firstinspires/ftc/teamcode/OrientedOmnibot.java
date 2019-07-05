@@ -20,8 +20,8 @@ import static java.lang.Math.abs;
 /**
  * Demo Omnibot code for showing off the omnibot
  */
-@TeleOp(name="Omnibot Oriented", group="DemoBot")
-public class OmnibotOriented extends OpMode {
+@TeleOp(name="Oriented Omnibot", group="DemoBot")
+public class OrientedOmnibot extends OpMode {
 
     //drive train motors
     private DcMotor frontLeft = null;

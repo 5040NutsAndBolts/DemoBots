@@ -12,11 +12,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
-import sun.nio.cs.ext.MacHebrew;
 
 import static java.lang.Math.abs;
 
-@TeleOp(name="Kiwi", group="DemoBot")
+@TeleOp(name="Oriented Kiwi", group="DemoBot")
 public class OrientedKiwi extends OpMode
 {
 

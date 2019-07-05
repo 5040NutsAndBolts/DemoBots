@@ -5,10 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.RobotLog;
+import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="Tile Runner Tank", group="DemoBot")
+@TeleOp(name = "Tile Runner Arcade", group = "DemoBot")
 
-public class TileRunner extends OpMode {
+public class TileRunnerArcade extends OpMode {
 
     private DcMotor frontRight = null;
     private DcMotor backRight = null;
@@ -45,15 +46,15 @@ public class TileRunner extends OpMode {
     @Override
     public void loop() {
 
-        double leftStickY, rightStickY;
+        double leftStickY, rightStickX;
 
         //movement for robot input kid
         double leftStickY1 = gamepad1.left_stick_y;
-        double rightStickY1 = gamepad1.right_stick_y;
+        double rightStickX1 = gamepad1.right_stick_x;
 
         //movement for robot input master
         double leftStickY2 = gamepad2.left_stick_y;
-        double rightStickY2 = gamepad2.right_stick_y;
+        double rightStickX2 = gamepad2.right_stick_x;
 
         //bumper for speeding up and slowing down the robot.
         boolean leftBumper2 = gamepad2.left_bumper;
@@ -63,59 +64,62 @@ public class TileRunner extends OpMode {
         boolean a2 = gamepad2.a;
 
         //toggle to stop robot
-        if(a2 && !pressedA) {
+        if (a2 && !pressedA) {
             move = !move;
             pressedA = true;
-        }
-        else if(pressedA && !a2) {
+        } else if (pressedA && !a2) {
             pressedA = false;
         }
 
         //slows down robot with master bumper
-        if(leftBumper2 && !pressed) {
+        if (leftBumper2 && !pressed) {
             speed += 0.2;
             pressed = true;
         }
         // resets pressed for when it isnt pressed
-        else if(pressed && !leftBumper2) {
+        else if (pressed && !leftBumper2) {
             pressed = false;
         }
         //speeds up robot with master bumper
-        if(rightBumper2 && !pressed2) {
+        if (rightBumper2 && !pressed2) {
             speed -= 0.2;
             pressed2 = true;
         }
         // resets pressed for when it isnt pressed
-        else if(pressed2 && !rightBumper2) {
+        else if (pressed2 && !rightBumper2) {
             pressed2 = false;
         }
 
         //stops divide by 0 error, fastest the robot can go
-        if(speed < 1) {
+        if (speed < 1) {
             speed = 1;
         }
 
         //changing who is driving and move is for stopping kid driving
-        if(leftStickY2 == 0 && rightStickY2 == 0 && move) {
+        if (leftStickY2 == 0 && rightStickX2 == 0 && move) {
             leftStickY = leftStickY1;
-            rightStickY = rightStickY1;
-        }
-        else {
+            rightStickX = rightStickX1;
+        } else {
             leftStickY = leftStickY2;
-            rightStickY = rightStickY2;
+            rightStickX = rightStickX2;
         }
 
         //movement for robot
-        frontRight.setPower(rightStickY/speed);
-        backRight.setPower(rightStickY/speed);
-        frontLeft.setPower(leftStickY/speed);
-        backLeft.setPower(leftStickY/speed);
+        // Left and right motor powers
+        double leftPower = leftStickY - rightStickX;
+        double rightPower = leftStickY + rightStickX;
+        // Setting power to right motors
+        frontRight.setPower(Range.clip(rightPower / speed, -1.0, 1.0));
+        backRight.setPower(Range.clip(rightPower / speed, -1.0, 1.0));
+        // Setting power to left motors
+        frontLeft.setPower(Range.clip(leftPower / speed, -1.0, 1.0));
+        backLeft.setPower(Range.clip(leftPower / speed, -1.0, 1.0));
 
-        telemetry.addData("Speed", 1/speed);
+        telemetry.addData("Speed", 1 / speed);
         telemetry.addData("override", !move);
         telemetry.update();
 
-        RobotLog.ii("5040MSGHW","Motors running");
+        RobotLog.ii("5040MSGHW", "Motors running");
     }
 }
 
